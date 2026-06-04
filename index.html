@@ -54,6 +54,14 @@ header{
   transition:width .25s cubic-bezier(.4,0,.2,1),opacity .2s;
 }
 #lpanel.collapsed{width:0;opacity:0;pointer-events:none}
+@media(max-width:700px){
+  #lpanel{display:none;position:fixed;top:0;left:0;bottom:0;width:100vw!important;z-index:1100;flex-direction:column;overflow:hidden;background:var(--surf);border-right:none;}
+  #lpanel.mobile-open{display:flex}
+  #info-drawer{position:fixed;left:0!important;top:0;bottom:0;width:100vw!important;z-index:1100;border-right:none}
+  #ficha{position:fixed;top:0;bottom:0;right:0;width:100vw!important;border-left:none;z-index:1100}
+  #mobile-legend{display:flex;flex-direction:column}
+}
+#mobile-legend{display:none}
 
 /* toggle moved to panel bottom */
 
@@ -135,8 +143,8 @@ header{
 #lpanel.collapsed ~ #info-drawer,
 #lpanel.collapsed + * #info-drawer{ left:0 }
 
-.drawer-head{padding:12px 14px 10px;flex-shrink:0;position:relative}
-.drawer-close{position:absolute;top:8px;right:10px;background:rgba(255,255,255,.25);border:none;color:#fff;cursor:pointer;width:24px;height:24px;border-radius:50%;font-size:13px;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.drawer-head{padding:12px 46px 10px 14px;flex-shrink:0;position:relative}
+.drawer-close{position:absolute;top:8px;right:10px;background:rgba(255,255,255,.25);border:none;color:#fff;cursor:pointer;width:34px;height:34px;border-radius:50%;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .15s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .drawer-close:hover{background:rgba(255,255,255,.4)}
 .drawer-eyebrow{font-size:8px;color:rgba(255,255,255,.6);letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px}
 .drawer-title{font-size:15px;font-weight:700;color:#fff;line-height:1.25}
@@ -162,7 +170,7 @@ header{
   transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);pointer-events:none;
 }
 #ficha.open{transform:translateX(0);pointer-events:all}
-@media(max-width:640px){#ficha{width:100vw;border-left:none}}
+
 
 .fh-head{padding:14px 46px 12px 14px;flex-shrink:0;position:relative}
 .fh-loc-name{font-size:20px;font-weight:700;color:#fff;line-height:1.15;margin-bottom:2px}
@@ -271,11 +279,19 @@ path.leaflet-interactive:focus{outline:none!important}
       <div class="loc-legend" id="loc-legend-box"><div class="loc-legend-t">Localidades</div></div>
     </div>
       <div style="padding:6px 12px 8px;border-top:1px solid var(--border);flex-shrink:0">
-        <button onclick="togglePanel()" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);font-family:inherit;font-size:10px;font-weight:600;color:var(--txt2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">◀ Ocultar menú</button>
+        <button onclick="isMobile()?closeMobileMenu():togglePanel()" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);font-family:inherit;font-size:10px;font-weight:600;color:var(--txt2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;touch-action:manipulation;">◀ Ocultar menú</button>
       </div>
   </div>
-  <button id="show-map-btn" onclick="togglePanel()" style="display:none;position:absolute;right:10px;bottom:90px;z-index:500;background:#fff;border:1px solid var(--border);border-radius:8px;width:34px;height:34px;font-size:16px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.13);align-items:center;justify-content:center;touch-action:manipulation;">☰</button>
+  <button id="show-map-btn" onclick="togglePanel()" style="display:none;position:absolute;left:10px;bottom:90px;z-index:500;background:#1A6EA8;border:none;border-radius:8px;width:44px;height:44px;font-size:20px;color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);align-items:center;justify-content:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent;">☰</button>
 
+  <!-- LEYENDA FLOTANTE MÓVIL -->
+  <div id="mobile-legend" style="position:absolute;right:10px;bottom:14px;z-index:499;background:rgba(255,255,255,.93);border-radius:8px;padding:8px 10px;box-shadow:0 2px 10px rgba(0,0,0,.18);min-width:130px;pointer-events:none;">
+    <div id="ml-title" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#555;margin-bottom:6px">Presencia en el mapa</div>
+    <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><div id="ml-hi" style="width:14px;height:8px;border-radius:2px;flex-shrink:0"></div><span style="font-size:10px;color:#333">Alta presencia</span></div>
+    <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><div id="ml-md" style="width:14px;height:8px;border-radius:2px;flex-shrink:0"></div><span style="font-size:10px;color:#333">Media presencia</span></div>
+    <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><div id="ml-lo" style="width:14px;height:8px;border-radius:2px;flex-shrink:0"></div><span style="font-size:10px;color:#333">Baja presencia</span></div>
+    <div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:8px;border-radius:2px;flex-shrink:0;border:1.5px dashed #bbb"></div><span style="font-size:10px;color:#333">Sin relación</span></div>
+  </div>
   <!-- INFO DRAWER (izquierdo, sobre el mapa) -->
   <div id="info-drawer">
     <div class="drawer-head" id="drawer-head">
@@ -1038,7 +1054,22 @@ function renderLocEjeBody(id,eje,sub){
 
 function closePanel(){S.loc=null;document.getElementById("ficha").classList.remove("open");rebuildLocs();map.flyTo([20.275,-103.12],11,{duration:.8});}
 function closePanelSoft(){S.loc=null;document.getElementById("ficha").classList.remove("open");}
+function isMobile(){return window.innerWidth<=700;}
+function openMobileMenu(){
+  const lp=document.getElementById("lpanel");
+  lp.classList.remove("collapsed");
+  lp.classList.add("mobile-open");
+}
+function closeMobileMenu(){
+  const lp=document.getElementById("lpanel");
+  lp.classList.remove("mobile-open");
+}
 function togglePanel(){
+  if(isMobile()){
+    const lp=document.getElementById("lpanel");
+    lp.classList.contains("mobile-open")?closeMobileMenu():openMobileMenu();
+    return;
+  }
   panelOpen=!panelOpen;
   document.getElementById("lpanel").classList.toggle("collapsed",!panelOpen);
   const sb=document.getElementById("show-map-btn");
@@ -1048,12 +1079,40 @@ function togglePanel(){
 }
 function setHint(msg){document.getElementById("h-hint").innerHTML=msg;}
 function updateLegend(){
-  if(!S.eje){["lsw-hi","lsw-md","lsw-lo"].forEach(id=>document.getElementById(id).style.background="#aab5c0");document.getElementById("leg-t").textContent="Presencia en el mapa";return;}
-  const r=RAMP[S.eje];
-  document.getElementById("lsw-hi").style.background=r.hi;
-  document.getElementById("lsw-md").style.background=r.md;
-  document.getElementById("lsw-lo").style.background=r.lo;
+  // Colores base exactos del mapa (mismos que función iF en rebuildLocs)
+  const EJE_COL={A:"#DC0032",B:"#8E0045",C:"#F05A28"};
+  const ml=document.getElementById("mobile-legend");
+  if(!S.eje){
+    ["lsw-hi","lsw-md","lsw-lo"].forEach(id=>document.getElementById(id).style.background="#aab5c0");
+    document.getElementById("leg-t").textContent="Presencia en el mapa";
+    // Sin eje: restablecer colores grises en leyenda móvil
+    if(ml){
+      document.getElementById("ml-hi").style.background="#aab5c0";
+      document.getElementById("ml-md").style.background="#aab5c0";
+      document.getElementById("ml-lo").style.background="#aab5c0";
+      document.getElementById("ml-title").textContent="Presencia en el mapa";
+    }
+    return;
+  }
+  const col=EJE_COL[S.eje]||"#888";
+  // Convertir hex a rgb para usar con opacidad
+  const r=parseInt(col.slice(1,3),16),g=parseInt(col.slice(3,5),16),b=parseInt(col.slice(5,7),16);
+  const hiC=`rgba(${r},${g},${b},.90)`;
+  const mdC=`rgba(${r},${g},${b},.62)`;
+  const loC=`rgba(${r},${g},${b},.28)`;
+  // Leyenda desktop
+  document.getElementById("lsw-hi").style.background=hiC;
+  document.getElementById("lsw-md").style.background=mdC;
+  document.getElementById("lsw-lo").style.background=loC;
   document.getElementById("leg-t").textContent=`Intensidad · Eje ${S.eje}`;
+  // Leyenda flotante móvil
+  // Leyenda móvil: actualizar colores siempre (CSS controla visibilidad)
+  if(ml){
+    document.getElementById("ml-hi").style.background=hiC;
+    document.getElementById("ml-md").style.background=mdC;
+    document.getElementById("ml-lo").style.background=loC;
+    document.getElementById("ml-title").textContent=`Intensidad · Eje ${S.eje}`;
+  }
 }
 function buildLocLegend(){
   const box=document.getElementById("loc-legend-box");
@@ -1100,7 +1159,13 @@ function hexB(h){return parseInt(h.slice(5,7),16)}
 
 // INIT
 buildLocLegend();rebuildLocs();updateLegend();
-if(window.innerWidth<700){togglePanel();}
+if(window.innerWidth<=700){
+  const sb=document.getElementById("show-map-btn");
+  if(sb) sb.style.display="flex";
+} else {
+  const sb=document.getElementById("show-map-btn");
+  if(sb) sb.style.display="none";
+}
 </script>
 
 <div id="modal-overlay">
